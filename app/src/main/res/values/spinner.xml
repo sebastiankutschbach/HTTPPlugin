@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="entries">
+        <item>text/plain</item>
+        <item>application/json</item>
+        <item>application/xml</item>
+    </string-array>
+</resources>
