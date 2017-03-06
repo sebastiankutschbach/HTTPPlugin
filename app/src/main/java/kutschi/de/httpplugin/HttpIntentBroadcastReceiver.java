@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -31,19 +32,21 @@ public class HttpIntentBroadcastReceiver extends WakefulBroadcastReceiver {
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
-        String url = preferences.getString(String.valueOf(R.id.txtUrl), "");
+        String url = preferences.getString(String.valueOf(R.id.txtUrl), "").trim();
         // Request a string response from the provided URL.
         final int method = preferences.getInt(String.valueOf(R.id.rgMethod), Request.Method.GET);
         StringRequest stringRequest = new StringRequest(method, url,
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Toast.makeText(context, "String Success :" + response, Toast.LENGTH_LONG).show();
                         Log.d(TAG, "String Success :" + response);
                     }
                 },
                 new com.android.volley.Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "String  Error In Request :" + error.toString(), Toast.LENGTH_LONG).show();
                         Log.d(TAG, "String  Error In Request :" + error.toString());
 
                     }
