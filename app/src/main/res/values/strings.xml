@@ -28,4 +28,5 @@
     <string name="methodTextView">HTTP-Methode</string>
     <string name="textViewZoneIn">Payload beim Erreichen einer Zone</string>
     <string name="textViewZoneOut">Payload beim Verlassen einer Zone</string>
+    <string name="succesful_saved">Erfolgreich gespeichert</string>
 </resources>

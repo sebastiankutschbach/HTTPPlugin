@@ -18,6 +18,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 
@@ -74,21 +75,21 @@ public class HttpPluginMain extends AppCompatActivity{
         methodGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton childAt = (RadioButton)findViewById(checkedId);
-                if (childAt.getText().equals(getString(R.string.radioButtonGet)) || childAt.getText().equals(getString(R.string.radioButtonDelete))) {
+                RadioButton checkedRadioButton = (RadioButton)group.findViewById(group.getCheckedRadioButtonId());
+                if (checkedRadioButton.getText().equals(getString(R.string.radioButtonGet)) || checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))) {
                     contentTypeGroup.setEnabled(false);
                     contentTypeGroup.setVisibility(View.GONE);
                 } else{
                     contentTypeGroup.setEnabled(true);
                     contentTypeGroup.setVisibility(View.VISIBLE);
                 }
-                if(childAt.getText().equals(getString(R.string.radioButtonGet))) {
+                if(checkedRadioButton.getText().equals(getString(R.string.radioButtonGet))) {
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.GET);
-                } else if(childAt.getText().equals(getString(R.string.radioButtonPost))){
+                } else if(checkedRadioButton.getText().equals(getString(R.string.radioButtonPost))){
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.POST);
-                } else if(childAt.getText().equals(getString(R.string.radioButtonPut))){
+                } else if(checkedRadioButton.getText().equals(getString(R.string.radioButtonPut))){
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.PUT);
-                } else if(childAt.getText().equals(getString(R.string.radioButtonDelete))){
+                } else if(checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))){
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.DELETE);
                 }
             }
@@ -133,6 +134,10 @@ public class HttpPluginMain extends AppCompatActivity{
         if (id == R.id.action_info) {
             Intent info = new Intent(this, Info.class);
             startActivity(info);
+            return true;
+        } else if(id == R.id.action_save) {
+            editor.commit();
+            Toast.makeText(this, getString(R.string.succesful_saved), Toast.LENGTH_SHORT).show();
             return true;
         }
 
