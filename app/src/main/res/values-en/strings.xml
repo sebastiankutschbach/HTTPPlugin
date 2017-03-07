@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HTTP Plugin</string>
+    <string name="action_info">Info</string>
+    <string name="authentification">authentification</string>
+    <string name="contentType">content type</string>
+    <string name="disclaimer_title">MIT license</string>
+    <string name="info_title">description</string>
+    <string name="disclaimer">Copyright © 2017 Sebastian Kutschbach\\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+    <string name="methodTextView">http method</string>
+    <string name="notificationText">notification text</string>
+    <string name="payload">payload</string>
+    <string name="radioButtonDelete">DELETE</string>
+    <string name="radioButtonGet">GET</string>
+    <string name="radioButtonPost">POST</string>
+    <string name="radioButtonPut">PUT</string>
+    <string name="succesful_saved">Successful saved</string>
+    <string name="textViewZoneIn">payload on entering a zone</string>
+    <string name="textViewZoneOut">payload on leaving a zone</string>
+    <string name="title">HTTP Plugin settings</string>
+    <string name="urlTextView">URL</string>
+</resources>

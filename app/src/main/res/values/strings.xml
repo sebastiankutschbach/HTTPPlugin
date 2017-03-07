@@ -1,19 +1,20 @@
 <resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">HTTP Plugin</string>
-    <string name="settings">Please enter your Example Plugin settings here!</string>
+    <!--<string name="settings">Please enter your Example Plugin settings here!</string>-->
     <string name="action_info">Info</string>
 
-    <string name="info_title">Short description</string>
-    <string name="info">This App is an Example plugin for the EgiGeoZone app, which only display a notification. For more info about plugins look at the homepage or forum.</string>
-    <string name="disclaimer_title">Disclaimer - End User License Agreement</string>
-    <string name="disclaimer">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</string>
-
-    <string name="hp_help">You can find the EgiGeoZone manual here:\n <a href="http://www.egigeozone.de/manual/default_en.html">http://www.egigeozone.de/manual/default_en.html</a></string>
-    <string name="hp">EgiGeoZone website:\n <a href="http://www.egigeozone.de">http://www.egigeozone.de</a></string>
-    <string name="forum">EgiGeoZone forum:\n <a href="http://rpi.spdns.eu/egigeozone/">http://rpi.spdns.eu/egigeozone/</a></string>
+    <string name="info_title">Beschreibung</string>
+    <string name="info">Diese App stellt eine Erweiterung für die App EgiGeoZone(BT) dar. Sie ermöglicht es, beim Betreten oder Verlassen einer Zone einen beliebigen HTTP-Request abzusetzen.</string>
+    <string name="disclaimer_title">MIT Lizenz</string>
+    <string name="disclaimer">Copyright © 2017 Sebastian Kutschbach\nHiermit wird unentgeltlich jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die "Software") erhält,
+        die Erlaubnis erteilt, sie uneingeschränkt zu nutzen, inklusive und ohne Ausnahme mit dem Recht, sie zu verwenden, zu kopieren, zu verändern, zusammenzufügen, zu veröffentlichen, zu verbreiten,
+        zu unterlizenzieren und/oder zu verkaufen, und Personen, denen diese Software überlassen wird, diese Rechte zu verschaffen, unter den folgenden Bedingungen: Der obige Urheberrechtsvermerk und
+        dieser Erlaubnisvermerk sind in allen Kopien oder Teilkopien der Software beizulegen.
+        \nDIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIESSLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER
+        RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG
+        EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.</string>
 
     <string name="title">HTTP Plugin settings</string>
-    <string name="aswitch">Show notification</string>
     <string name="notificationText">Notification text</string>
 
     <string name="authentification">Authentifizierung</string>

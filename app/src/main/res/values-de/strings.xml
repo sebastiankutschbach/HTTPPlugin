@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HTTP Plugin</string>
+    <string name="action_info">Info</string>
+    <string name="authentification">Authentifizierung</string>
+    <string name="contentType">Content-Type</string>
+    <string name="disclaimer">Copyright © 2017 Sebastian Kutschbach Hiermit wird unentgeltlich jeder Person, die eine Kopie der Software und der zugehörigen Dokumentationen (die \"Software\") erhält,         die Erlaubnis erteilt, sie uneingeschränkt zu nutzen, inklusive und ohne Ausnahme mit dem Recht, sie zu verwenden, zu kopieren, zu verändern, zusammenzufügen, zu veröffentlichen, zu verbreiten,         zu unterlizenzieren und/oder zu verkaufen, und Personen, denen diese Software überlassen wird, diese Rechte zu verschaffen, unter den folgenden Bedingungen: Der obige Urheberrechtsvermerk und         dieser Erlaubnisvermerk sind in allen Kopien oder Teilkopien der Software beizulegen.          DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER IMPLIZIERTE GARANTIE BEREITGESTELLT, EINSCHLIESSLICH DER GARANTIE ZUR BENUTZUNG FÜR DEN VORGESEHENEN ODER EINEM BESTIMMTEN ZWECK SOWIE JEGLICHER         RECHTSVERLETZUNG, JEDOCH NICHT DARAUF BESCHRÄNKT. IN KEINEM FALL SIND DIE AUTOREN ODER COPYRIGHTINHABER FÜR JEGLICHEN SCHADEN ODER SONSTIGE ANSPRÜCHE HAFTBAR ZU MACHEN, OB INFOLGE DER ERFÜLLUNG         EINES VERTRAGES, EINES DELIKTES ODER ANDERS IM ZUSAMMENHANG MIT DER SOFTWARE ODER SONSTIGER VERWENDUNG DER SOFTWARE ENTSTANDEN.</string>
+    <string name="disclaimer_title">MIT Lizenz</string>
+    <string name="info">Diese App stellt eine Erweiterung für die App EgiGeoZone(BT) dar. Sie ermöglicht es, beim Betreten oder Verlassen einer Zone einen beliebigen HTTP-Request abzusetzen.</string>
+    <string name="info_title">Beschreibung</string>
+    <string name="methodTextView">HTTP-Methode</string>
+    <string name="notificationText">Notification text</string>
+    <string name="payload">Payload</string>
+    <string name="radioButtonDelete">DELETE</string>
+    <string name="radioButtonGet">GET</string>
+    <string name="radioButtonPost">POST</string>
+    <string name="radioButtonPut">PUT</string>
+    <string name="succesful_saved">Erfolgreich gespeichert</string>
+    <string name="textViewZoneIn">Payload beim Erreichen einer Zone</string>
+    <string name="textViewZoneOut">Payload beim Verlassen einer Zone</string>
+    <string name="title">HTTP Plugin settings</string>
+    <string name="urlTextView">URL</string>
+</resources>

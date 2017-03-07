@@ -13,7 +13,7 @@ public class Info extends AppCompatActivity  {
         try {
             PackageInfo pi = getPackageManager().getPackageInfo("de.egi.geofence.geozone.plugin.example", PackageManager.GET_CONFIGURATIONS);
 			String v = pi.versionName;
-	        setTitle("ExamplePlugin " + v);
+	        setTitle("HttpPlugin " + v);
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
 		}
