@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 
-public class HttpPluginMain extends AppCompatActivity{
+public class HttpPluginMain extends AppCompatActivity {
 
     // The SharedPreferences object in which settings are stored
     private SharedPreferences mPrefs = null;
@@ -38,7 +38,7 @@ public class HttpPluginMain extends AppCompatActivity{
     private Switch authEnabledSwitch;
     private LinearLayout authGroup;
     private EditText userNameText;
-    private EditText passwordText ;
+    private EditText passwordText;
 
     private LinearLayout contentTypeGroup;
     private Spinner contentType;
@@ -66,7 +66,7 @@ public class HttpPluginMain extends AppCompatActivity{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 authGroup.setEnabled(isChecked);
-                authGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                setVisibilityOfAuthentificationGroup(isChecked);
                 editor.putBoolean(String.valueOf(authEnabledSwitch.getId()), isChecked);
             }
         });
@@ -75,21 +75,15 @@ public class HttpPluginMain extends AppCompatActivity{
         methodGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton checkedRadioButton = (RadioButton)group.findViewById(group.getCheckedRadioButtonId());
-                if (checkedRadioButton.getText().equals(getString(R.string.radioButtonGet)) || checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))) {
-                    contentTypeGroup.setEnabled(false);
-                    contentTypeGroup.setVisibility(View.GONE);
-                } else{
-                    contentTypeGroup.setEnabled(true);
-                    contentTypeGroup.setVisibility(View.VISIBLE);
-                }
-                if(checkedRadioButton.getText().equals(getString(R.string.radioButtonGet))) {
+                RadioButton checkedRadioButton = (RadioButton) group.findViewById(group.getCheckedRadioButtonId());
+                setVisibilityOfContentType(checkedRadioButton);
+                if (checkedRadioButton.getText().equals(getString(R.string.radioButtonGet))) {
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.GET);
-                } else if(checkedRadioButton.getText().equals(getString(R.string.radioButtonPost))){
+                } else if (checkedRadioButton.getText().equals(getString(R.string.radioButtonPost))) {
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.POST);
-                } else if(checkedRadioButton.getText().equals(getString(R.string.radioButtonPut))){
+                } else if (checkedRadioButton.getText().equals(getString(R.string.radioButtonPut))) {
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.PUT);
-                } else if(checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))){
+                } else if (checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))) {
                     editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.DELETE);
                 }
             }
@@ -99,7 +93,7 @@ public class HttpPluginMain extends AppCompatActivity{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 editor.putInt(String.valueOf(R.id.spinnerContentType), position);
-                editor.putString(String.valueOf(R.id.spinnerContentType) + "/text", String.valueOf(((TextView)view).getText()));
+                editor.putString(String.valueOf(R.id.spinnerContentType) + "/text", String.valueOf(((TextView) view).getText()));
             }
 
             @Override
@@ -108,6 +102,20 @@ public class HttpPluginMain extends AppCompatActivity{
                 editor.putString(String.valueOf(R.id.spinnerContentType) + "/text", null);
             }
         });
+    }
+
+    private void setVisibilityOfAuthentificationGroup(boolean isChecked) {
+        authGroup.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+    }
+
+    private void setVisibilityOfContentType(RadioButton checkedRadioButton) {
+        if (checkedRadioButton.getText().equals(getString(R.string.radioButtonGet)) || checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))) {
+            contentTypeGroup.setEnabled(false);
+            contentTypeGroup.setVisibility(View.GONE);
+        } else {
+            contentTypeGroup.setEnabled(true);
+            contentTypeGroup.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -135,7 +143,7 @@ public class HttpPluginMain extends AppCompatActivity{
             Intent info = new Intent(this, Info.class);
             startActivity(info);
             return true;
-        } else if(id == R.id.action_save) {
+        } else if (id == R.id.action_save) {
             editor.commit();
             Toast.makeText(this, getString(R.string.succesful_saved), Toast.LENGTH_SHORT).show();
             return true;
@@ -148,15 +156,16 @@ public class HttpPluginMain extends AppCompatActivity{
         urlText = (EditText) findViewById(R.id.txtUrl);
         urlText.setText(preferences.getString(String.valueOf(urlText.getId()), ""));
 
-        authEnabledSwitch = (Switch)findViewById(R.id.swtAuthEnabled);
+        authEnabledSwitch = (Switch) findViewById(R.id.swtAuthEnabled);
         authEnabledSwitch.setChecked(preferences.getBoolean(String.valueOf(authEnabledSwitch.getId()), false));
 
-        authGroup = (LinearLayout)findViewById(R.id.authGroup);
+        authGroup = (LinearLayout) findViewById(R.id.authGroup);
+        setVisibilityOfAuthentificationGroup(authEnabledSwitch.isChecked());
 
-        userNameText = (EditText)findViewById(R.id.txtUsername);
+        userNameText = (EditText) findViewById(R.id.txtUsername);
         userNameText.setText(preferences.getString(String.valueOf(userNameText.getId()), ""));
 
-        passwordText = (EditText)findViewById(R.id.txtPassword);
+        passwordText = (EditText) findViewById(R.id.txtPassword);
         passwordText.setText(preferences.getString(String.valueOf(passwordText.getId()), ""));
 
         payloadInText = (EditText) findViewById(R.id.txtPayloadZoneIn);
@@ -170,21 +179,21 @@ public class HttpPluginMain extends AppCompatActivity{
         contentType = (Spinner) findViewById(R.id.spinnerContentType);
         contentType.setSelection(preferences.getInt(String.valueOf(R.id.spinnerContentType), 0));
 
-        methodGroup = (RadioGroup)findViewById(R.id.rgMethod);
+        methodGroup = (RadioGroup) findViewById(R.id.rgMethod);
         int idxOfSelectedRadioButton = preferences.getInt(String.valueOf(methodGroup.getId()), 0);
-        if(idxOfSelectedRadioButton != 0) {
+        if (idxOfSelectedRadioButton != 0) {
             RadioButton button = (RadioButton) methodGroup.getChildAt(idxOfSelectedRadioButton);
             button.setChecked(true);
-            // FIXME: notify listener on restore
+            setVisibilityOfContentType(button);
         }
     }
 
-    class MyTextWatcher implements TextWatcher {
+    private class MyTextWatcher implements TextWatcher {
 
         private final EditText source;
         private final SharedPreferences.Editor editor;
 
-        public MyTextWatcher(SharedPreferences.Editor editor, EditText source) {
+        MyTextWatcher(SharedPreferences.Editor editor, EditText source) {
             this.editor = editor;
             this.source = source;
         }
