@@ -20,4 +20,6 @@
     <string name="textViewZoneOut">Payload beim Verlassen einer Zone</string>
     <string name="title">HTTP Plugin settings</string>
     <string name="urlTextView">URL</string>
+    <string name="url_pattern_not_matched">Die eingegebene URL enspricht nicht dem Format http(s)://[server(:port)(/resource)*</string>
+    <string name="credentials_empty">Der Username und/oder das Passwort können nicht leer sein, wenn Authentifizierung aktiviert ist.</string>
 </resources>

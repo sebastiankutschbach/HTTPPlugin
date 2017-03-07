@@ -22,15 +22,16 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 
+import java.util.regex.Pattern;
+
 public class HttpPluginMain extends AppCompatActivity {
 
-    // The SharedPreferences object in which settings are stored
-    private SharedPreferences mPrefs = null;
     // The name of the resulting SharedPreferences
     public static final String SHARED_PREFERENCE_NAME = HttpPluginMain.class.getSimpleName();
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
-
+    // The SharedPreferences object in which settings are stored
+    private SharedPreferences mPrefs = null;
     private EditText urlText;
 
     private RadioGroup methodGroup;
@@ -190,6 +191,7 @@ public class HttpPluginMain extends AppCompatActivity {
 
     private class MyTextWatcher implements TextWatcher {
 
+        private final Pattern URL_PATTERN = Pattern.compile("http(s)*://.+(:/d+)*(/.+)*");
         private final EditText source;
         private final SharedPreferences.Editor editor;
 
@@ -210,6 +212,19 @@ public class HttpPluginMain extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
+            if (source.getId() == R.id.txtUrl) {
+                if (!URL_PATTERN.matcher(s.toString()).matches()) {
+                    source.setError(getString(R.string.url_pattern_not_matched));
+                } else {
+                    source.setError(null);
+                }
+            } else if (source.getId() == R.id.txtUsername || source.getId() == R.id.txtPassword) {
+                if (s.toString().isEmpty()) {
+                    source.setError(getString(R.string.credentials_empty));
+                } else {
+                    source.setError(null);
+                }
+            }
             editor.putString(String.valueOf(source.getId()), s.toString());
         }
     }

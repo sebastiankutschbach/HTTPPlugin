@@ -1,4 +1,4 @@
-<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">HTTP Plugin</string>
     <!--<string name="settings">Please enter your Example Plugin settings here!</string>-->
     <string name="action_info">Info</string>
@@ -30,4 +30,6 @@
     <string name="textViewZoneIn">Payload beim Erreichen einer Zone</string>
     <string name="textViewZoneOut">Payload beim Verlassen einer Zone</string>
     <string name="succesful_saved">Erfolgreich gespeichert</string>
+    <string name="url_pattern_not_matched">Die eingegebene URL enspricht nicht dem Format http(s)://[server(:port)(/resource)*</string>
+    <string name="credentials_empty">Der Username und/oder das Passwort können nicht leer sein, wenn Authentifizierung aktiviert ist.</string>
 </resources>
