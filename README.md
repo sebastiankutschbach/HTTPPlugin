@@ -1,2 +1,2 @@
 # HTTPPlugin
-https://travis-ci.org/sebastiankutschbach/HTTPPlugin.svg?branch=master
+[![Build Status](https://travis-ci.org/sebastiankutschbach/HTTPPlugin.svg?branch=master)](https://travis-ci.org/sebastiankutschbach/HTTPPlugin)
