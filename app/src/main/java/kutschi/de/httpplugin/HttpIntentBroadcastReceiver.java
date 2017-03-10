@@ -28,7 +28,7 @@ public class HttpIntentBroadcastReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        preferences = context.getSharedPreferences(HttpPluginMain.SHARED_PREFERENCE_NAME, context.MODE_PRIVATE);
+        preferences = context.getSharedPreferences("", Context.MODE_PRIVATE);
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);

@@ -47,7 +47,7 @@ public class HttpPluginIntentSevice extends IntentService {
     }
 
     private void doEvent(Intent intent){
-        mPrefs = getSharedPreferences(HttpPluginMain.SHARED_PREFERENCE_NAME, MODE_PRIVATE);
+        mPrefs = getSharedPreferences("", MODE_PRIVATE);
 
         String transition = intent.getStringExtra("transition");
         transText = "";
@@ -74,13 +74,13 @@ public class HttpPluginIntentSevice extends IntentService {
      */
     public void sendNotification(Context context) {
         // Create an explicit content Intent that starts the main Activity
-        Intent notificationIntent = new Intent(context, HttpPluginMain.class);
+        Intent notificationIntent = new Intent(context, HttpProfileActivity.class);
 
         // Construct a task stack
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
         // Adds the main Activity to the task stack as the parent
-        stackBuilder.addParentStack(HttpPluginMain.class);
+        stackBuilder.addParentStack(HttpProfileActivity.class);
 
         // Push the content Intent onto the stack
         stackBuilder.addNextIntent(notificationIntent);

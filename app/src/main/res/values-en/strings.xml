@@ -22,4 +22,5 @@
     <string name="url_pattern_not_matched">The given URL does not match the format: http(s)://[server(:port)(/resource)*</string>
     <string name="info">This app is an extension to the app EgiGeoZone(BT). It provides the possibility to send http requests when leaving or entering zones.</string>
     <string name="credentials_empty">username and/or password cannot be empty, if authentification is active.</string>
+    <string name="profile_activity">profile</string>
 </resources>
