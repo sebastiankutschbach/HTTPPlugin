@@ -33,4 +33,4 @@ deploy:
     branch: multipleProfiles
 
 after_success:
--sh set_tags.sh
+- sh set_tags.sh
