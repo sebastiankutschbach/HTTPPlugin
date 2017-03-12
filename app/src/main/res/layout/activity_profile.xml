@@ -14,6 +14,13 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         android:weightSum="1">
 
+        <EditText
+            android:id="@+id/txtDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24dp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/urlTextView"
             android:layout_width="match_parent"
@@ -49,18 +56,18 @@
                 android:text="@string/radioButtonGet" />
 
             <RadioButton
-                android:id="@+id/rbPut"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/radioButtonPut" />
-
-            <RadioButton
                 android:id="@+id/rbPost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/radioButtonPost" />
+
+            <RadioButton
+                android:id="@+id/rbPut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/radioButtonPut" />
 
             <RadioButton
                 android:id="@+id/rbDelete"

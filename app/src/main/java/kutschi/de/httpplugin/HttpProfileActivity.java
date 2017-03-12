@@ -33,6 +33,7 @@ public class HttpProfileActivity extends AppCompatActivity {
     private String id;
     private Profile profile;
 
+    private EditText descriptionText;
     private EditText urlText;
 
     private RadioGroup methodGroup;
@@ -81,6 +82,7 @@ public class HttpProfileActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                profile.setDescription(descriptionText.getText().toString());
                 profile.setUrl(urlText.getText().toString());
                 for (int idx = 0; idx < 4; idx++) {
                     if (((RadioButton) methodGroup.getChildAt(idx)).isChecked()) {
@@ -158,6 +160,9 @@ public class HttpProfileActivity extends AppCompatActivity {
     }
 
     private void findViewsByIdAndRestoreValues(Profile profile) {
+        descriptionText = (EditText) findViewById(R.id.txtDescription);
+        descriptionText.setText(profile.getDescription());
+
         urlText = (EditText) findViewById(R.id.txtUrl);
         urlText.setText(profile.getUrl());
 
