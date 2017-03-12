@@ -46,14 +46,14 @@ public class HttpPluginIntentSevice extends IntentService {
         HttpIntentBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void doEvent(Intent intent){
+    private void doEvent(Intent intent) {
         mPrefs = getSharedPreferences("", MODE_PRIVATE);
 
         String transition = intent.getStringExtra("transition");
         transText = "";
-        if (transition.equals("1")){
+        if (transition.equals("1")) {
             transText = "Entering";
-        }else{
+        } else {
             transText = "Leaving";
         }
         zoneName = intent.getStringExtra("zone_name");
@@ -66,11 +66,12 @@ public class HttpPluginIntentSevice extends IntentService {
         sendNotification(this);
 
     }
+
     /**
      * Posts a notificationText in the notificationText bar.
      * If the user clicks the notificationText, control goes to the main Activity.
-     * @param transitionType The type of transition that occurred.
      *
+     * @param transitionType The type of transition that occurred.
      */
     public void sendNotification(Context context) {
         // Create an explicit content Intent that starts the main Activity
