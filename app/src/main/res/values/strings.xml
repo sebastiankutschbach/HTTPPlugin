@@ -33,4 +33,5 @@
     <string name="url_pattern_not_matched">Die eingegebene URL enspricht nicht dem Format http(s)://[server(:port)(/resource)*</string>
     <string name="credentials_empty">Der Username und/oder das Passwort können nicht leer sein, wenn Authentifizierung aktiviert ist.</string>
     <string name="profile_activity">Profil</string>
+    <string name="preference_file_key">kutschi.de.httpplugin.prefs</string>
 </resources>

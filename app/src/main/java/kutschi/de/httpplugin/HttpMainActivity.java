@@ -15,13 +15,16 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 
-import java.util.List;
+import org.json.JSONException;
+
+import java.util.Map;
 
 import kutschi.de.httpplugin.model.Profile;
-import kutschi.de.httpplugin.model.ProfilePrefs;
+import kutschi.de.httpplugin.model.ProfileFactory;
 
 /**
  * Created by seb on 09.03.17.
@@ -29,7 +32,6 @@ import kutschi.de.httpplugin.model.ProfilePrefs;
 
 public class HttpMainActivity extends AppCompatActivity {
 
-    private ProfilePrefs profilePrefs = new ProfilePrefs();
     private ListView profileListView;
 
     @Override
@@ -37,19 +39,25 @@ public class HttpMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        profilePrefs.restore();
+        ProfileFactory.getInstance().setContext(getApplicationContext());
+        try {
+            ProfileFactory.getInstance().restore();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         // List View
         profileListView = (ListView) findViewById(R.id.profileListView);
-        ProfileListAdapter adapter = new ProfileListAdapter(this, profilePrefs.getProfiles());
+        ProfileListAdapter adapter = new ProfileListAdapter(this, ProfileFactory.getInstance().getProfiles());
         profileListView.setAdapter(adapter);
         profileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Empty intent for creation
                 Intent intent = new Intent(getApplicationContext(), HttpProfileActivity.class);
-                final Profile profile = (Profile) parent.getAdapter().getItem(position);
-                intent.putExtra(Profile.class.getName(), profile);
+                final Map.Entry<String, Profile> entry = (Map.Entry) parent.getAdapter().getItem(position);
+                intent.putExtra("id", entry.getKey());
+                intent.putExtra(Profile.class.getName(), entry.getValue());
                 startActivity(intent);
             }
         });
@@ -67,9 +75,24 @@ public class HttpMainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            ProfileFactory.getInstance().restore();
+            ((ProfileListAdapter) profileListView.getAdapter()).notifyDataSetChanged();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        profilePrefs.persist();
+        try {
+            ProfileFactory.getInstance().persist();
+        } catch (JSONException e) {
+            Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
 
@@ -77,10 +100,10 @@ public class HttpMainActivity extends AppCompatActivity {
 class ProfileListAdapter extends BaseAdapter {
 
     private final Context context;
-    private final List<Profile> profiles;
+    private final Map<String, Profile> profiles;
     private final LayoutInflater layoutInflater;
 
-    ProfileListAdapter(Context context, @NonNull List<Profile> profiles) {
+    ProfileListAdapter(Context context, @NonNull Map<String, Profile> profiles) {
         this.context = context;
         this.profiles = profiles;
         this.layoutInflater = context.getSystemService(LayoutInflater.class);
@@ -93,7 +116,7 @@ class ProfileListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return profiles.get(position);
+        return profiles.entrySet().toArray()[position];
     }
 
     @Override
@@ -103,7 +126,8 @@ class ProfileListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Profile profile = (Profile) getItem(position);
+        Map.Entry<String, Profile> entry = (Map.Entry<String, Profile>) getItem(position);
+        Profile profile = entry.getValue();
         if (convertView == null) {
             convertView = this.layoutInflater.inflate(R.layout.profile_list_item, parent, false);
         }

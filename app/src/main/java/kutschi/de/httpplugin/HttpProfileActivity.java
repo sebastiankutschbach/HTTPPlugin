@@ -21,23 +21,26 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 
+import org.json.JSONException;
+
 import java.util.regex.Pattern;
 
 import kutschi.de.httpplugin.model.Profile;
+import kutschi.de.httpplugin.model.ProfileFactory;
 
 public class HttpProfileActivity extends AppCompatActivity {
 
+    private String id;
     private Profile profile;
 
     private EditText urlText;
 
     private RadioGroup methodGroup;
-
     private Switch authEnabledSwitch;
     private LinearLayout authGroup;
     private EditText userNameText;
-    private EditText passwordText;
 
+    private EditText passwordText;
     private LinearLayout contentTypeGroup;
     private Spinner contentType;
     private EditText payloadInText;
@@ -48,6 +51,7 @@ public class HttpProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        id = getIntent().getStringExtra("id");
         profile = (Profile) getIntent().getSerializableExtra(Profile.class.getName());
         if (profile == null) {
             profile = new Profile("New Profile", "", Request.Method.GET, new String[0]);
@@ -77,7 +81,31 @@ public class HttpProfileActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), getString(R.string.succesful_saved), Toast.LENGTH_SHORT).show();
+                profile.setUrl(urlText.getText().toString());
+                for (int idx = 0; idx < 4; idx++) {
+                    if (((RadioButton) methodGroup.getChildAt(idx)).isChecked()) {
+                        profile.setMethod(idx);
+                        break;
+                    }
+                }
+                if (authEnabledSwitch.isChecked()) {
+                    profile.setUsername(userNameText.getText().toString());
+                    profile.setPassword(passwordText.getText().toString());
+                }
+                if (profile.getMethod() == Request.Method.PUT || profile.getMethod() == Request.Method.POST) {
+                    profile.setContentType(contentType.getSelectedItem().toString());
+                    profile.setEnteringContent(payloadInText.getText().toString());
+                    profile.setLeavingContent(payloadOutText.getText().toString());
+                }
+
+                id = ProfileFactory.getInstance().addProfile(id, profile);
+                try {
+                    ProfileFactory.getInstance().persist();
+                    Toast.makeText(getApplicationContext(), getString(R.string.succesful_saved), Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+                finish();
             }
         });
     }
@@ -97,11 +125,6 @@ public class HttpProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_plugin, menu);
@@ -113,12 +136,21 @@ public class HttpProfileActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        int itemId = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_info) {
+        if (itemId == R.id.action_info) {
             Intent info = new Intent(this, Info.class);
             startActivity(info);
+            return true;
+        } else if (itemId == R.id.action_delete) {
+            ProfileFactory.getInstance().removeProfile(id);
+            try {
+                ProfileFactory.getInstance().persist();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            finish();
             return true;
         }
 

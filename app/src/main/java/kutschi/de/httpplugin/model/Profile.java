@@ -1,5 +1,9 @@
 package kutschi.de.httpplugin.model;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 /**
@@ -17,6 +21,23 @@ public class Profile implements Serializable {
     private String contentType;
     private String enteringContent;
     private String leavingContent;
+
+    public Profile(String jsonString) throws JSONException {
+        final JSONObject jsonObject = new JSONObject(jsonString);
+        this.description = jsonObject.getString("description");
+        this.url = jsonObject.getString("url");
+        this.method = jsonObject.getInt("method");
+        final JSONArray zones = jsonObject.getJSONArray("zones");
+        this.zones = new String[zones.length()];
+        for (int i = 0; i < zones.length(); i++) {
+            this.zones[i] = zones.getString(i);
+        }
+        this.username = jsonObject.optString("username");
+        this.password = jsonObject.optString("password");
+        this.contentType = jsonObject.optString("contentType");
+        this.enteringContent = jsonObject.optString("enteringContent");
+        this.leavingContent = jsonObject.optString("leavingContent");
+    }
 
     public Profile(String description, String url, int method, String[] zones) {
         this.description = description;
@@ -95,5 +116,23 @@ public class Profile implements Serializable {
 
     public void setLeavingContent(String leavingContent) {
         this.leavingContent = leavingContent;
+    }
+
+    public String toJsonString() throws JSONException {
+        final JSONObject jsonObject = new JSONObject();
+        jsonObject.put("description", description);
+        jsonObject.put("url", url);
+        jsonObject.put("method", method);
+        final JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < zones.length; i++) {
+            jsonArray.put(zones[i]);
+        }
+        jsonObject.put("zones", jsonArray);
+        jsonObject.put("username", username);
+        jsonObject.put("password", password);
+        jsonObject.put("contentType", contentType);
+        jsonObject.put("enteringContent", enteringContent);
+        jsonObject.put("leavingContent", leavingContent);
+        return jsonObject.toString();
     }
 }
