@@ -46,14 +46,14 @@ public class HttpPluginIntentSevice extends IntentService {
         HttpIntentBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void doEvent(Intent intent){
-        mPrefs = getSharedPreferences(HttpPluginMain.SHARED_PREFERENCE_NAME, MODE_PRIVATE);
+    private void doEvent(Intent intent) {
+        mPrefs = getSharedPreferences("", MODE_PRIVATE);
 
         String transition = intent.getStringExtra("transition");
         transText = "";
-        if (transition.equals("1")){
+        if (transition.equals("1")) {
             transText = "Entering";
-        }else{
+        } else {
             transText = "Leaving";
         }
         zoneName = intent.getStringExtra("zone_name");
@@ -66,21 +66,22 @@ public class HttpPluginIntentSevice extends IntentService {
         sendNotification(this);
 
     }
+
     /**
      * Posts a notificationText in the notificationText bar.
      * If the user clicks the notificationText, control goes to the main Activity.
-     * @param transitionType The type of transition that occurred.
      *
+     * @param transitionType The type of transition that occurred.
      */
     public void sendNotification(Context context) {
         // Create an explicit content Intent that starts the main Activity
-        Intent notificationIntent = new Intent(context, HttpPluginMain.class);
+        Intent notificationIntent = new Intent(context, HttpProfileActivity.class);
 
         // Construct a task stack
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 
         // Adds the main Activity to the task stack as the parent
-        stackBuilder.addParentStack(HttpPluginMain.class);
+        stackBuilder.addParentStack(HttpProfileActivity.class);
 
         // Push the content Intent onto the stack
         stackBuilder.addNextIntent(notificationIntent);

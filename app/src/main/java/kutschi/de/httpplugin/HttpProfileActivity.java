@@ -3,13 +3,13 @@ package kutschi.de.httpplugin;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -17,30 +17,31 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 
+import org.json.JSONException;
+
 import java.util.regex.Pattern;
 
-public class HttpPluginMain extends AppCompatActivity {
+import kutschi.de.httpplugin.model.Profile;
+import kutschi.de.httpplugin.model.ProfileFactory;
 
-    // The name of the resulting SharedPreferences
-    public static final String SHARED_PREFERENCE_NAME = HttpPluginMain.class.getSimpleName();
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
-    // The SharedPreferences object in which settings are stored
-    private SharedPreferences mPrefs = null;
+public class HttpProfileActivity extends AppCompatActivity {
+
+    private String id;
+    private Profile profile;
+
+    private EditText descriptionText;
     private EditText urlText;
 
     private RadioGroup methodGroup;
-
     private Switch authEnabledSwitch;
     private LinearLayout authGroup;
     private EditText userNameText;
-    private EditText passwordText;
 
+    private EditText passwordText;
     private LinearLayout contentTypeGroup;
     private Spinner contentType;
     private EditText payloadInText;
@@ -49,18 +50,15 @@ public class HttpPluginMain extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plugin);
+        setContentView(R.layout.activity_profile);
 
-        preferences = getSharedPreferences(SHARED_PREFERENCE_NAME, MODE_PRIVATE);
-        editor = preferences.edit();
+        id = getIntent().getStringExtra("id");
+        profile = (Profile) getIntent().getSerializableExtra(Profile.class.getName());
+        if (profile == null) {
+            profile = new Profile("New Profile", "", Request.Method.GET, new String[0]);
+        }
+        findViewsByIdAndRestoreValues(profile);
 
-        findViewsByIdAndRestoreValues();
-
-        urlText.addTextChangedListener(new MyTextWatcher(editor, urlText));
-        payloadInText.addTextChangedListener(new MyTextWatcher(editor, payloadInText));
-        payloadOutText.addTextChangedListener(new MyTextWatcher(editor, payloadOutText));
-        userNameText.addTextChangedListener(new MyTextWatcher(editor, userNameText));
-        passwordText.addTextChangedListener(new MyTextWatcher(editor, passwordText));
 
         // Authentification Group ausblenden, wenn nicht benötigt
         authEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -68,7 +66,6 @@ public class HttpPluginMain extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 authGroup.setEnabled(isChecked);
                 setVisibilityOfAuthentificationGroup(isChecked);
-                editor.putBoolean(String.valueOf(authEnabledSwitch.getId()), isChecked);
             }
         });
 
@@ -78,29 +75,39 @@ public class HttpPluginMain extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 RadioButton checkedRadioButton = (RadioButton) group.findViewById(group.getCheckedRadioButtonId());
                 setVisibilityOfContentType(checkedRadioButton);
-                if (checkedRadioButton.getText().equals(getString(R.string.radioButtonGet))) {
-                    editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.GET);
-                } else if (checkedRadioButton.getText().equals(getString(R.string.radioButtonPost))) {
-                    editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.POST);
-                } else if (checkedRadioButton.getText().equals(getString(R.string.radioButtonPut))) {
-                    editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.PUT);
-                } else if (checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))) {
-                    editor.putInt(String.valueOf(methodGroup.getId()), Request.Method.DELETE);
-                }
             }
         });
 
-        contentType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_profile_save);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                editor.putInt(String.valueOf(R.id.spinnerContentType), position);
-                editor.putString(String.valueOf(R.id.spinnerContentType) + "/text", String.valueOf(((TextView) view).getText()));
-            }
+            public void onClick(View v) {
+                profile.setDescription(descriptionText.getText().toString());
+                profile.setUrl(urlText.getText().toString());
+                for (int idx = 0; idx < 4; idx++) {
+                    if (((RadioButton) methodGroup.getChildAt(idx)).isChecked()) {
+                        profile.setMethod(idx);
+                        break;
+                    }
+                }
+                if (authEnabledSwitch.isChecked()) {
+                    profile.setUsername(userNameText.getText().toString());
+                    profile.setPassword(passwordText.getText().toString());
+                }
+                if (profile.getMethod() == Request.Method.PUT || profile.getMethod() == Request.Method.POST) {
+                    profile.setContentType(contentType.getSelectedItem().toString());
+                    profile.setEnteringContent(payloadInText.getText().toString());
+                    profile.setLeavingContent(payloadOutText.getText().toString());
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                editor.putInt(String.valueOf(R.id.spinnerContentType), 0);
-                editor.putString(String.valueOf(R.id.spinnerContentType) + "/text", null);
+                id = ProfileFactory.getInstance().addProfile(id, profile);
+                try {
+                    ProfileFactory.getInstance().persist();
+                    Toast.makeText(getApplicationContext(), getString(R.string.succesful_saved), Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+                finish();
             }
         });
     }
@@ -120,12 +127,6 @@ public class HttpPluginMain extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        editor.commit();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_plugin, menu);
@@ -137,56 +138,84 @@ public class HttpPluginMain extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        int itemId = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_info) {
+        if (itemId == R.id.action_info) {
             Intent info = new Intent(this, Info.class);
             startActivity(info);
             return true;
-        } else if (id == R.id.action_save) {
-            editor.commit();
-            Toast.makeText(this, getString(R.string.succesful_saved), Toast.LENGTH_SHORT).show();
+        } else if (itemId == R.id.action_delete) {
+            ProfileFactory.getInstance().removeProfile(id);
+            try {
+                ProfileFactory.getInstance().persist();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            finish();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void findViewsByIdAndRestoreValues() {
-        urlText = (EditText) findViewById(R.id.txtUrl);
-        urlText.setText(preferences.getString(String.valueOf(urlText.getId()), ""));
+    private void findViewsByIdAndRestoreValues(Profile profile) {
+        descriptionText = (EditText) findViewById(R.id.txtDescription);
+        descriptionText.setText(profile.getDescription());
 
+        urlText = (EditText) findViewById(R.id.txtUrl);
+        urlText.setText(profile.getUrl());
+
+        final String username = profile.getUsername();
+        final String password = profile.getPassword();
         authEnabledSwitch = (Switch) findViewById(R.id.swtAuthEnabled);
-        authEnabledSwitch.setChecked(preferences.getBoolean(String.valueOf(authEnabledSwitch.getId()), false));
+        authEnabledSwitch.setChecked((username != null && !username.isEmpty()) || (password != null && !password.isEmpty()));
 
         authGroup = (LinearLayout) findViewById(R.id.authGroup);
         setVisibilityOfAuthentificationGroup(authEnabledSwitch.isChecked());
 
         userNameText = (EditText) findViewById(R.id.txtUsername);
-        userNameText.setText(preferences.getString(String.valueOf(userNameText.getId()), ""));
+        userNameText.setText(profile.getUsername());
 
         passwordText = (EditText) findViewById(R.id.txtPassword);
-        passwordText.setText(preferences.getString(String.valueOf(passwordText.getId()), ""));
+        passwordText.setText(profile.getPassword());
 
         payloadInText = (EditText) findViewById(R.id.txtPayloadZoneIn);
-        payloadInText.setText(preferences.getString(String.valueOf(payloadInText.getId()), ""));
+        payloadInText.setText(profile.getEnteringContent());
 
         payloadOutText = (EditText) findViewById(R.id.txtPayloadZoneOut);
-        payloadOutText.setText(preferences.getString(String.valueOf(payloadOutText.getId()), ""));
+        payloadOutText.setText(profile.getLeavingContent());
 
         contentTypeGroup = (LinearLayout) findViewById(R.id.contentTypeGroup);
 
         contentType = (Spinner) findViewById(R.id.spinnerContentType);
-        contentType.setSelection(preferences.getInt(String.valueOf(R.id.spinnerContentType), 0));
+        final String contentTypeString = profile.getContentType();
+        for (int i = 0; i < contentType.getChildCount(); i++) {
+            String text = (String) contentType.getAdapter().getItem(0);
+            if (contentTypeString.equals(text)) {
+                contentType.setSelection(i);
+            }
+        }
 
         methodGroup = (RadioGroup) findViewById(R.id.rgMethod);
-        int idxOfSelectedRadioButton = preferences.getInt(String.valueOf(methodGroup.getId()), 0);
-        if (idxOfSelectedRadioButton != 0) {
-            RadioButton button = (RadioButton) methodGroup.getChildAt(idxOfSelectedRadioButton);
-            button.setChecked(true);
-            setVisibilityOfContentType(button);
+        RadioButton button;
+        switch (profile.getMethod()) {
+            default:
+            case Request.Method.GET:
+                button = ((RadioButton) methodGroup.getChildAt(0));
+                break;
+            case Request.Method.POST:
+                button = ((RadioButton) methodGroup.getChildAt(1));
+                break;
+            case Request.Method.PUT:
+                button = ((RadioButton) methodGroup.getChildAt(2));
+                break;
+            case Request.Method.DELETE:
+                button = ((RadioButton) methodGroup.getChildAt(3));
+                break;
         }
+        button.setChecked(true);
+        setVisibilityOfContentType(button);
     }
 
     private class MyTextWatcher implements TextWatcher {
