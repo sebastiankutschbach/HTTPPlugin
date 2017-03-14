@@ -204,10 +204,10 @@ public class HttpProfileActivity extends AppCompatActivity {
             case Request.Method.GET:
                 button = ((RadioButton) methodGroup.getChildAt(0));
                 break;
-            case Request.Method.PUT:
+            case Request.Method.POST:
                 button = ((RadioButton) methodGroup.getChildAt(1));
                 break;
-            case Request.Method.POST:
+            case Request.Method.PUT:
                 button = ((RadioButton) methodGroup.getChildAt(2));
                 break;
             case Request.Method.DELETE:
