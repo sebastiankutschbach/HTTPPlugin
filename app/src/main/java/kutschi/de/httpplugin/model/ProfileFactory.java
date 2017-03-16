@@ -98,7 +98,8 @@ public class ProfileFactory {
 
     public List<String> getZoneNames() {
         ContentResolver contentResolver = context.getContentResolver();
-        final List<String> zoneNames = getZonesFromContentProvider(contentResolver, CONTENT_URI);
+        List<String> zoneNames = new ArrayList<>();
+        zoneNames.addAll(getZonesFromContentProvider(contentResolver, CONTENT_URI));
         zoneNames.addAll(getZonesFromContentProvider(contentResolver, CONTENT_BT_URI));
         return zoneNames;
     }
@@ -106,7 +107,7 @@ public class ProfileFactory {
     @NonNull
     private List<String> getZonesFromContentProvider(ContentResolver contentResolver, Uri contentUri) {
         final List<String> zoneNames = new ArrayList<>();
-        try (Cursor cursor = contentResolver.query(CONTENT_URI, null, null, null, null)) {
+        try (Cursor cursor = contentResolver.query(contentUri, null, null, null, null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     String zoneName = cursor.getString(cursor.getColumnIndex(CN_NAME));
