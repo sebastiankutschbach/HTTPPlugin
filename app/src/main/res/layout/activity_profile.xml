@@ -18,7 +18,9 @@
             android:id="@+id/txtDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24dp"
+            android:hint="@string/description"
+            android:labelFor="@id/txtDescription"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -32,8 +34,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="http://server:port/resource"
-            android:inputType="textPersonName" />
+            android:hint="@string/url_hint"
+            android:inputType="textUri" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/active_zones" />
+
+        <GridLayout
+            android:id="@+id/GlZones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/methodTextView"
@@ -97,7 +109,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Username"
+                android:hint="@string/username_hint"
                 android:inputType="textPersonName" />
 
             <EditText
@@ -105,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Passwort"
+                android:hint="@string/password_hint"
                 android:inputType="textPassword" />
 
         </LinearLayout>
@@ -165,7 +177,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginBottom="@id/linear_layout_profile"
-        android:layout_marginRight="@id/linear_layout_profile"
+        android:layout_marginEnd="@id/linear_layout_profile"
         android:src="@android:drawable/ic_menu_save"
         app:layout_anchor="@id/linear_layout_profile"
         app:layout_anchorGravity="bottom|right|end" />

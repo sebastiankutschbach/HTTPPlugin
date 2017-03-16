@@ -10,8 +10,10 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -23,6 +25,9 @@ import com.android.volley.Request;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import kutschi.de.httpplugin.model.Profile;
@@ -35,6 +40,8 @@ public class HttpProfileActivity extends AppCompatActivity {
 
     private EditText descriptionText;
     private EditText urlText;
+
+    private GridLayout glZones;
 
     private RadioGroup methodGroup;
     private Switch authEnabledSwitch;
@@ -90,6 +97,16 @@ public class HttpProfileActivity extends AppCompatActivity {
                         break;
                     }
                 }
+
+                List<String> activeZoneNames = new ArrayList<>();
+                for (int idx = 0; idx < glZones.getChildCount(); idx++) {
+                    final CheckBox childAt = (CheckBox) glZones.getChildAt(idx);
+                    if (childAt.isChecked()) {
+                        activeZoneNames.add(String.valueOf(childAt.getText()));
+                    }
+                }
+                profile.setZones(activeZoneNames.toArray(new String[activeZoneNames.size()]));
+
                 if (authEnabledSwitch.isChecked()) {
                     profile.setUsername(userNameText.getText().toString());
                     profile.setPassword(passwordText.getText().toString());
@@ -165,6 +182,16 @@ public class HttpProfileActivity extends AppCompatActivity {
 
         urlText = (EditText) findViewById(R.id.txtUrl);
         urlText.setText(profile.getUrl());
+
+        glZones = (GridLayout) findViewById(R.id.GlZones);
+        final List<String> zoneNames = ProfileFactory.getInstance().getZoneNames();
+        final List<String> zones = Arrays.asList(profile.getZones());
+        for (String zoneName : zoneNames) {
+            final CheckBox checkBox = new CheckBox(this);
+            checkBox.setText(zoneName);
+            checkBox.setChecked(zones.contains(zoneName));
+            glZones.addView(checkBox);
+        }
 
         final String username = profile.getUsername();
         final String password = profile.getPassword();

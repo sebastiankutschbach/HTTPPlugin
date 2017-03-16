@@ -15,13 +15,17 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import kutschi.de.httpplugin.model.Profile;
 import kutschi.de.httpplugin.model.ProfileFactory;
 
 /**
+ * This broadcast receiver executes the http request depending on the settings in the profiles.
+ *
  * Created by seb on 28.02.17.
  */
 
@@ -38,15 +42,20 @@ public class HttpIntentBroadcastReceiver extends WakefulBroadcastReceiver {
         }
         final Map<String, Profile> profiles = ProfileFactory.getInstance().getProfiles();
 
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(context);
         for (final Profile profile : profiles.values()) {
-            // Instantiate the RequestQueue.
-            RequestQueue queue = Volley.newRequestQueue(context);
+            final List<String> activeZoneNames = Arrays.asList(profile.getZones());
+            final String zone = intent.getStringExtra("zone_name");
+            if (!activeZoneNames.contains(zone)) {
+                return;
+            }
             // Request a string response from the provided URL.
             StringRequest stringRequest = new StringRequest(profile.getMethod(), profile.getUrl().trim(),
                     new com.android.volley.Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Toast.makeText(context, "String Success :" + response, Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, context.getString(R.string.succesful_sent), Toast.LENGTH_LONG).show();
                             Log.d(TAG, "String Success :" + response);
                         }
                     },
@@ -61,7 +70,7 @@ public class HttpIntentBroadcastReceiver extends WakefulBroadcastReceiver {
 
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
+                    Map<String, String> params = new HashMap<>();
                     if (profile.getUsername() != null && !profile.getUsername().isEmpty() && profile.getPassword() != null && !profile.getUsername().isEmpty()) {
                         String creds = String.format("%s:%s", profile.getUsername(), profile.getPassword());
                         String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);

@@ -34,4 +34,10 @@
     <string name="credentials_empty">Der Username und/oder das Passwort können nicht leer sein, wenn Authentifizierung aktiviert ist.</string>
     <string name="profile_activity">Profil</string>
     <string name="preference_file_key">kutschi.de.httpplugin.prefs</string>
+    <string name="active_zones">Aktive Zonen</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Passwort</string>
+    <string name="url_hint">http://server:port/resource</string>
+    <string name="succesful_sent">HTTP-Request erfolgreich gesendet</string>
+    <string name="description">Name des Profils</string>
 </resources>
