@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,8 @@ import kutschi.de.httpplugin.model.ProfileFactory;
 
 public class HttpProfileActivity extends AppCompatActivity {
 
+    private static final String TAG = HttpProfileActivity.class.getName();
+
     private String id;
     private Profile profile;
 
@@ -61,7 +64,9 @@ public class HttpProfileActivity extends AppCompatActivity {
 
         id = getIntent().getStringExtra("id");
         profile = (Profile) getIntent().getSerializableExtra(Profile.class.getName());
+        Log.i(TAG, "onCreate: Restoring profile from intent");
         if (profile == null) {
+            Log.d(TAG, "onCreate: no profile was found, creating a new (empty) one");
             profile = new Profile("New Profile", "", Request.Method.GET, new String[0]);
         }
         findViewsByIdAndRestoreValues(profile);
@@ -71,6 +76,7 @@ public class HttpProfileActivity extends AppCompatActivity {
         authEnabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.i(TAG, "onCheckedChanged: Authentification changed to " + (isChecked ? "ON" : "OFF"));
                 authGroup.setEnabled(isChecked);
                 setVisibilityOfAuthentificationGroup(isChecked);
             }
@@ -80,6 +86,7 @@ public class HttpProfileActivity extends AppCompatActivity {
         methodGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Log.i(TAG, "onCheckedChanged: HTTP method was changed. Updating visibility of content group");
                 RadioButton checkedRadioButton = (RadioButton) group.findViewById(group.getCheckedRadioButtonId());
                 setVisibilityOfContentType(checkedRadioButton);
             }
@@ -89,6 +96,7 @@ public class HttpProfileActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: Save Button was pressed.");
                 profile.setDescription(descriptionText.getText().toString());
                 profile.setUrl(urlText.getText().toString());
                 for (int idx = 0; idx < 4; idx++) {
@@ -117,11 +125,15 @@ public class HttpProfileActivity extends AppCompatActivity {
                     profile.setLeavingContent(payloadOutText.getText().toString());
                 }
 
+                Log.d(TAG, "onClick: Adding profile to the list");
                 id = ProfileFactory.getInstance().addProfile(id, profile);
                 try {
+                    Log.d(TAG, "onClick: Persisting profile");
                     ProfileFactory.getInstance().persist();
+                    Log.d(TAG, "onClick: Persisting successful");
                     Toast.makeText(getApplicationContext(), getString(R.string.succesful_saved), Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
+                    Log.e(TAG, "onClick: Persisting failed. ExceptionMessage: " + e.getLocalizedMessage(), e);
                     Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                 }
                 finish();
@@ -134,12 +146,15 @@ public class HttpProfileActivity extends AppCompatActivity {
     }
 
     private void setVisibilityOfContentType(RadioButton checkedRadioButton) {
+        Log.d(TAG, "setVisibilityOfContentType: " + checkedRadioButton.getText() + " was chosen");
         if (checkedRadioButton.getText().equals(getString(R.string.radioButtonGet)) || checkedRadioButton.getText().equals(getString(R.string.radioButtonDelete))) {
             contentTypeGroup.setEnabled(false);
             contentTypeGroup.setVisibility(View.GONE);
+            Log.d(TAG, "setVisibilityOfContentType: Content type group set to invisible.");
         } else {
             contentTypeGroup.setEnabled(true);
             contentTypeGroup.setVisibility(View.VISIBLE);
+            Log.d(TAG, "setVisibilityOfContentType: Content type group set to visible.");
         }
     }
 
@@ -163,11 +178,13 @@ public class HttpProfileActivity extends AppCompatActivity {
             startActivity(info);
             return true;
         } else if (itemId == R.id.action_delete) {
+            Log.i(TAG, "onOptionsItemSelected: Delete menu entry was pressed. Removing profile from list");
             ProfileFactory.getInstance().removeProfile(id);
             try {
+                Log.d(TAG, "onOptionsItemSelected: Persisting list with profile removed.");
                 ProfileFactory.getInstance().persist();
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, "onOptionsItemSelected: Persisting failed. Message: " + e.getLocalizedMessage(), e);
             }
             finish();
             return true;

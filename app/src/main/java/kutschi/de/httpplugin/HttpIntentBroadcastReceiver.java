@@ -34,14 +34,13 @@ public class HttpIntentBroadcastReceiver extends WakefulBroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-
         try {
             ProfileFactory.getInstance().restore();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        final Map<String, Profile> profiles = ProfileFactory.getInstance().getProfiles();
 
+        final Map<String, Profile> profiles = ProfileFactory.getInstance().getProfiles();
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(context);
         for (final Profile profile : profiles.values()) {
@@ -50,20 +49,21 @@ public class HttpIntentBroadcastReceiver extends WakefulBroadcastReceiver {
             if (!activeZoneNames.contains(zone)) {
                 return;
             }
+            Log.d(TAG, "onReceive: profile contains entered/leaved zone");
             // Request a string response from the provided URL.
             StringRequest stringRequest = new StringRequest(profile.getMethod(), profile.getUrl().trim(),
                     new com.android.volley.Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             Toast.makeText(context, context.getString(R.string.succesful_sent), Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "String Success :" + response);
+                            Log.i(TAG, "Http request sucessfull sent: " + response);
                         }
                     },
                     new com.android.volley.Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Toast.makeText(context, "String  Error In Request :" + error.toString(), Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "String  Error In Request :" + error.toString());
+                            Log.e(TAG, "String  Error In Request :" + error.getLocalizedMessage(), error);
 
                         }
                     }) {

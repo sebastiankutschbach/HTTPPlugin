@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 
@@ -32,6 +32,7 @@ import kutschi.de.httpplugin.model.ProfileFactory;
 
 public class HttpMainActivity extends AppCompatActivity {
 
+    private static final String TAG = HttpMainActivity.class.getName();
     private ListView profileListView;
 
     @Override
@@ -39,11 +40,13 @@ public class HttpMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d(TAG, "onCreate: MainActivity");
+
         ProfileFactory.getInstance().setContext(getApplicationContext());
         try {
             ProfileFactory.getInstance().restore();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "onCreate: JsonException while restoring profiles. Message: " + e.getLocalizedMessage(), e);
         }
 
         // List View
@@ -58,6 +61,7 @@ public class HttpMainActivity extends AppCompatActivity {
                 final Map.Entry<String, Profile> entry = (Map.Entry) parent.getAdapter().getItem(position);
                 intent.putExtra("id", entry.getKey());
                 intent.putExtra(Profile.class.getName(), entry.getValue());
+                Log.i(TAG, "onItemClick: profile with id " + id + " selected. Starting HttpProfileActivity.");
                 startActivity(intent);
             }
         });
@@ -69,6 +73,7 @@ public class HttpMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Empty intent for creation
                 Intent intent = new Intent(getApplicationContext(), HttpProfileActivity.class);
+                Log.i(TAG, "onClick: Add button was clicked. Creating new profile and starting HttpProfileActivity.");
                 startActivity(intent);
             }
         });
@@ -81,7 +86,7 @@ public class HttpMainActivity extends AppCompatActivity {
             ProfileFactory.getInstance().restore();
             ((ProfileListAdapter) profileListView.getAdapter()).notifyDataSetChanged();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "onResume: JsonException while restoring profiles. Message: " + e.getLocalizedMessage(), e);
         }
     }
 
@@ -91,7 +96,7 @@ public class HttpMainActivity extends AppCompatActivity {
         try {
             ProfileFactory.getInstance().persist();
         } catch (JSONException e) {
-            Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "onPause: JsonException while persisting profiles. Message: " + e.getLocalizedMessage(), e);
         }
     }
 }

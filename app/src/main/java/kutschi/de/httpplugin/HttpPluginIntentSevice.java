@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 /**
  * Created by seb on 28.02.17.
@@ -16,6 +17,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 public class HttpPluginIntentSevice extends IntentService {
 
+    private static final String TAG = HttpPluginIntentSevice.class.getName();
     private static final String ACTION_EGIGEOZONE_EVENT = "de.egi.geofence.geozone.plugin.EVENT";
     // The SharedPreferences object in which settings are stored
     private SharedPreferences mPrefs = null;
@@ -36,7 +38,7 @@ public class HttpPluginIntentSevice extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        Log.i(TAG, "onHandleIntent: Received intent from EgiGeoZone");
         String action = intent.getAction();
         if (ACTION_EGIGEOZONE_EVENT.equals(action)) {
             // Call Method to perform EgiGeoZone events
@@ -48,7 +50,6 @@ public class HttpPluginIntentSevice extends IntentService {
 
     private void doEvent(Intent intent) {
         mPrefs = getSharedPreferences("", MODE_PRIVATE);
-
         String transition = intent.getStringExtra("transition");
         transText = "";
         if (transition.equals("1")) {
