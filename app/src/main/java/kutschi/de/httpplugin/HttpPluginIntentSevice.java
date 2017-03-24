@@ -9,9 +9,28 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import kutschi.de.httpplugin.model.Profile;
+import kutschi.de.httpplugin.model.ProfileFactory;
 
 /**
+ * This IntentService, executes the http request depending on the settings in the profiles
  * Created by seb on 28.02.17.
  */
 
@@ -19,18 +38,6 @@ public class HttpPluginIntentSevice extends IntentService {
 
     private static final String TAG = HttpPluginIntentSevice.class.getName();
     private static final String ACTION_EGIGEOZONE_EVENT = "de.egi.geofence.geozone.plugin.EVENT";
-    // The SharedPreferences object in which settings are stored
-    private SharedPreferences mPrefs = null;
-
-    private String transText;
-    private String zoneName;
-    private String latitude;
-    private String longitude;
-    private String deviceId;
-    private String date;
-
-
-    private String notificationText = null;
 
     public HttpPluginIntentSevice() {
         super("HttpPluginIntentSevice");
@@ -48,61 +55,75 @@ public class HttpPluginIntentSevice extends IntentService {
         HttpIntentBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private void doEvent(Intent intent) {
-        mPrefs = getSharedPreferences("", MODE_PRIVATE);
-        String transition = intent.getStringExtra("transition");
-        transText = "";
-        if (transition.equals("1")) {
-            transText = "Entering";
-        } else {
-            transText = "Leaving";
+    private void doEvent(final Intent intent) {
+        try {
+            ProfileFactory.getInstance().restore();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        zoneName = intent.getStringExtra("zone_name");
-        latitude = intent.getStringExtra("latitude");
-        longitude = intent.getStringExtra("longitude");
-        deviceId = intent.getStringExtra("device_id");
-        date = intent.getStringExtra("date");
 
-        // Post notification as an example, what we can do
-        sendNotification(this);
+        final Map<String, Profile> profiles = ProfileFactory.getInstance().getProfiles();
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        for (final Profile profile : profiles.values()) {
+            final List<String> activeZoneNames = Arrays.asList(profile.getZones());
+            final String zone = intent.getStringExtra("zone_name");
+            if (!activeZoneNames.contains(zone)) {
+                return;
+            }
+            Log.d(TAG, "onReceive: profile contains entered/leaved zone");
+            // Request a string response from the provided URL.
+            StringRequest stringRequest = new StringRequest(profile.getMethod(), profile.getUrl().trim(),
+                    new com.android.volley.Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.succesful_sent), Toast.LENGTH_LONG).show();
+                            Log.i(TAG, "Http request sucessfull sent: " + response);
+                        }
+                    },
+                    new com.android.volley.Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(), "String  Error In Request :" + error.toString(), Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "String  Error In Request :" + error.getLocalizedMessage(), error);
 
-    }
+                        }
+                    }) {
 
-    /**
-     * Posts a notificationText in the notificationText bar.
-     * If the user clicks the notificationText, control goes to the main Activity.
-     *
-     * @param transitionType The type of transition that occurred.
-     */
-    public void sendNotification(Context context) {
-        // Create an explicit content Intent that starts the main Activity
-        Intent notificationIntent = new Intent(context, HttpProfileActivity.class);
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    if (profile.getUsername() != null && !profile.getUsername().isEmpty() && profile.getPassword() != null && !profile.getUsername().isEmpty()) {
+                        String creds = String.format("%s:%s", profile.getUsername(), profile.getPassword());
+                        String auth = "Basic " + Base64.encodeToString(creds.getBytes(), Base64.DEFAULT);
+                        params.put("Authorization", auth);
+                    }
+                    return params;
+                }
 
-        // Construct a task stack
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                @Override
+                public String getBodyContentType() {
+                    return profile.getContentType();
+                }
 
-        // Adds the main Activity to the task stack as the parent
-        stackBuilder.addParentStack(HttpProfileActivity.class);
-
-        // Push the content Intent onto the stack
-        stackBuilder.addNextIntent(notificationIntent);
-
-        // Get a PendingIntent containing the entire back stack
-        PendingIntent notificationPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // Get a notificationText builder that's compatible with platform versions >= 4
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-
-        // Set the notificationText contents
-        builder.setSmallIcon(android.R.drawable.ic_notification_overlay).setContentTitle(transText + " " + zoneName)
-                .setContentText(notificationText).setContentIntent(notificationPendingIntent).setDefaults(Notification.DEFAULT_ALL);
-
-        // Get an instance of the Notification manager
-        NotificationManager mNotificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Issue the notificationText
-        mNotificationManager.notify(0, builder.build());
+                @Override
+                public byte[] getBody() throws AuthFailureError {
+                    final int method = profile.getMethod();
+                    if (method == Method.GET || method == Method.DELETE) {
+                        return new byte[0];
+                    } else {
+                        String payload;
+                        if ("1".equals(intent.getStringExtra("transition"))) { //entering
+                            payload = profile.getEnteringContent();
+                        } else { //leaving
+                            payload = profile.getLeavingContent();
+                        }
+                        return payload.getBytes();
+                    }
+                }
+            };
+            // Add the request to the RequestQueue.
+            queue.add(stringRequest);
+        }
     }
 }
