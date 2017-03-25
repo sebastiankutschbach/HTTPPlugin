@@ -1,14 +1,7 @@
 package kutschi.de.httpplugin;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -57,6 +50,7 @@ public class HttpPluginIntentSevice extends IntentService {
 
     private void doEvent(final Intent intent) {
         try {
+            ProfileFactory.getInstance().setContext(getApplicationContext());
             ProfileFactory.getInstance().restore();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -73,6 +67,10 @@ public class HttpPluginIntentSevice extends IntentService {
             }
             Log.d(TAG, "onReceive: profile contains entered/leaved zone");
             // Request a string response from the provided URL.
+            if (profile.getUrl() == null) {
+                Log.e(TAG, "doEvent: Url was null. Doing nothing.");
+                return;
+            }
             StringRequest stringRequest = new StringRequest(profile.getMethod(), profile.getUrl().trim(),
                     new com.android.volley.Response.Listener<String>() {
                         @Override
